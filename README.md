@@ -23,7 +23,7 @@ Installation helper script for Mac + boot2docker + pipework
 
 
 
-注意: 既存の boot2docker 環境のデータは全て消去されます
+*注意: 既存の boot2docker 環境のデータは全て失われます*
 
 ### b2d-pipework install
 
@@ -38,14 +38,16 @@ Installation helper script for Mac + boot2docker + pipework
 
 ### b2d-pipework run
 
-```docker run``` コマンドを実行して任意のコンテナを起動した後、```pipework```を実行して任意のIPアドレスを付与します
+Usage: ```b2d-pipework run <IP Address> [<Docker options> ...] <Container Image>```
+
+- ```docker run -d -t``` コマンドを実行して任意のコンテナを起動した後、```pipework```を実行して任意のIPアドレスを付与します
 
 - ```docker run``` と同じコマンドラインパラメータを使用できます
 
 実行例
 
 ```
-b2d-pipework 192.168.99.101/24 -d -t mogproject/sshd
+b2d-pipework 192.168.99.101 mogproject/sshd
 ```
 
 
@@ -53,3 +55,51 @@ b2d-pipework 192.168.99.101/24 -d -t mogproject/sshd
 ----
 
 - コンテナには ```192.168.99.0/24``` セグメントの ```.1```, ```.2``` 以外のアドレスを指定してください
+
+
+使用方法
+----
+
+### 事前準備
+
+- [VirtualBox](https://www.virtualbox.org/) のインストール
+- [Homebrew](http://brew.sh/) のインストールとカタログ最新化
+
+```
+$ sudo brew update
+$ sudo brew tap homebrew/binary
+```
+
+### インストール
+
+*注意: 既存の boot2docker 環境のデータは全て失われます*
+
+```
+$ ./b2d-pipework clean
+$ ./b2d-pipework install
+```
+
+インストールが完了したら、環境変数を設定。(.bashrc/.zshrc への設定を推奨)
+
+```
+$ export DOCKER_HOST=tcp://127.0.0.1:4243
+```
+
+### 動作確認
+
+- boot2docker VM にホストオンリーネットワークのアドレスで接続
+
+```
+$ ping 192.168.99.2
+```
+
+- IPアドレスを指定してコンテナを起動
+
+```
+$ ./b2d-pipework run 192.168.99.101 mogproject/sshd
+$ docker ps
+$ ssh ssh-user@192.168.99.101    # password: ssh-user
+```
+
+
+
