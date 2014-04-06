@@ -79,7 +79,7 @@ $ ./b2d-pipework clean
 $ ./b2d-pipework install
 ```
 
-インストールが完了したら、環境変数を設定。(.bashrc/.zshrc への設定を推奨)
+インストールが完了したら、環境変数を設定。(.bashrc / .zshrc への設定を推奨)
 
 ```
 $ export DOCKER_HOST=tcp://127.0.0.1:4243

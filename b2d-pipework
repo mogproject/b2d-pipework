@@ -10,7 +10,6 @@ B2D_CFG_DIR=$HOME/.boot2docker
 KEY_NAME=id_rsa
 PRIVATE_KEY=$B2D_CFG_DIR/$KEY_NAME
 PUBLIC_KEY=$PRIVATE_KEY.pub
-BOOTLOCAL_TMP=/tmp/bootlocal.sh
 
 B2D_SSH="boot2docker ssh -i $PRIVATE_KEY"
 B2D_SCP="scp -i $PRIVATE_KEY -P 2022 -o StrictHostKeyChecking=no"
