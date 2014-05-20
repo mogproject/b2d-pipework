@@ -17,6 +17,8 @@ B2D_SCP="scp -i $PRIVATE_KEY -P 2022 -o StrictHostKeyChecking=no"
 B2D_VM_BIN=/var/lib/boot2docker/bin
 B2D_VM_PIPEWORK=$B2D_VM_BIN/pipework
 
+DOCKER_CMD="docker -H tcp://127.0.0.1:4243"
+
 PIPEWORK_URL=https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework
 
 HOSTONLY_SUBNET=192.168.99.0
@@ -173,7 +175,7 @@ install_pipework() {
 }
 
 check() {
-  docker -H=tcp://127.0.0.1:4243 version || return 1
+  $DOCKER_CMD version || return 1
 
   echo
   echo "Congratulations!"
@@ -181,10 +183,20 @@ check() {
   echo
 }
 
+check_connection() {
+  echo "Checking connection to the docker daemon..."
+  $DOCKER_CMD version >/dev/null 2>&1 && return 0
+  boot2docker status && return 1
+  # If boot2docker-vm is not running, start it.
+  boot2docker start
+  $DOCKER_CMD version >/dev/null 2>&1
+}
+
 run() {
+  check_connection || return 1
   ip=$1
   shift
-  cid=$(docker -H tcp://127.0.0.1:4243 run -d -t $@) || return 1
+  cid=$($DOCKER_CMD run -d -t $@) || return 1
   $B2D_SSH sudo pipework eth1 $cid $ip/$HOSTONLY_SUBNET_LEN || return 1
   echo "Launched container: ${cid:0:12} -> $ip/$HOSTONLY_SUBNET_LEN"
 }
@@ -222,6 +234,7 @@ case $1 in
   clean) clean;;
   install) install_ && check;;
   run) shift; run $@;;
-  *) echo "Usage: $0 [{clean|install|run}]"; exit 1
+  ssh) $B2D_SSH;;
+  *) echo "Usage: $0 [{clean|install|run|ssh}]"; exit 1
 esac
 
