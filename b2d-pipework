@@ -14,6 +14,9 @@ PUBLIC_KEY=$PRIVATE_KEY.pub
 B2D_SSH="boot2docker ssh -i $PRIVATE_KEY"
 B2D_SCP="scp -i $PRIVATE_KEY -P 2022 -o StrictHostKeyChecking=no"
 
+B2D_VM_BIN=/var/lib/boot2docker/bin
+B2D_VM_PIPEWORK=$B2D_VM_BIN/pipework
+
 PIPEWORK_URL=https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework
 
 HOSTONLY_SUBNET=192.168.99.0
@@ -163,10 +166,10 @@ setup_bootlocal() {
 
 install_pipework() {
   $B2D_SSH " \
-    sudo mkdir -p /var/lib/boot2docker/bin && \
-    sudo curl -o /var/lib/boot2docker/bin/pipework $PIPEWORK_URL && \
-    sudo sed -i -f /var/lib/boot2docker/bin/pipework -e '1s%#!/bin/bash%#!/bin/sh%' && \
-    sudo chmod +x /var/lib/boot2docker/bin/pipework"
+    sudo mkdir -p $B2D_VM_BIN && \
+    sudo curl -o $B2D_VM_PIPEWORK $PIPEWORK_URL && \
+    sudo sed -i -e '1s%#!/bin/bash%#!/bin/sh%' $B2D_VM_PIPEWORK && \
+    sudo chmod +x $B2D_VM_PIPEWORK"
 }
 
 check() {
